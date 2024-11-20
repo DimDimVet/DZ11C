@@ -6,15 +6,27 @@
 
 #define TASK 1 // 1, 2, 3
 
+#if TASK == 1
+#define TITLE "Is filled in List Student\n"
+#define INSTRUCTION "Mode: Random Fill/Manual Fill\nPress button R or M\n"
+#define RANDOM 1
+#define MANUAL 2
+#define YES 3
+#define NO 4
 void listStudent();
+
+#elif TASK == 2
 void listBook();
+#elif TASK == 3
 void listWork();
+#endif
 
 int main()
 {
   printf("Start DZ11\n");
 #if TASK == 1
   listStudent();
+
 #elif TASK == 2
 //
 #elif TASK == 3
@@ -23,7 +35,7 @@ int main()
 }
 
 #if TASK == 1
-#pragma ListStudent
+
 enum Gender
 {
   Man,
@@ -54,45 +66,93 @@ typedef struct
   int gradeLesson;
 } itemStudent;
 
-int count = 10;
-itemStudent journalStudent[] = {};
+int count = 0;
+itemStudent *journalStudent;
 
-void randomFullStruct(int count);
 void printConsoleJournal(itemStudent *journalStudent, int count);
-char *pressButton();
-int *getNumber();
+void randomFullStruct(int count);
+void manualFullStruct(int count);
+char *pressButton(int *sizeStr);
+int validationButton();
 
 void listStudent()
 {
-  char zz[] = "1";
-  // printf("%s",zz);
-  char *str=pressButton();
-  //*str = *pressButton();
-   printf("+++%s\n",&str);
-   int result =strcmp (str,"12");
-   //printf("+-%d\n",result);
-   free(str);
-  // str = pressButton(str);
-  // printf("==%s", str);
-printf("+-%d,%s\n",result,str);
-  if (result==NULL)
+  printf(TITLE);
+  printf(INSTRUCTION);
+
+  int temp = validationButton();
+  if (temp == RANDOM)
   {
-    printf("++%s\n", str);
+    count = 10;
     randomFullStruct(count);
+    printConsoleJournal(journalStudent, count);
   }
-  printConsoleJournal(journalStudent, count);
+  else if (temp == MANUAL)
+  {
+    count = 1;
+    manualFullStruct(count);
+  }
+  else
+  {
+    printf("End Task.");
+  }
 }
 
-char *pressButton()
+int validationButton()
 {
-  char *pressButton = (char *)malloc(20 * sizeof(char));
-  scanf("%s", &pressButton);
-  printf("+%s\n", &pressButton);
+  char *randomChoice = {"R"};
+  int randomResult;
+  char *manualChoice = {"M"};
+  int manualResult;
+
+  char *yesChoice = {"Y"};
+  int yesResult;
+  char *noChoice = {"N"};
+  int noResult;
+
+  char *str = pressButton(malloc(*randomChoice * sizeof(char)));
+
+  randomResult = strcmp(str, randomChoice);
+  manualResult = strcmp(str, manualChoice);
+  yesResult = strcmp(str, yesChoice);
+  noResult = strcmp(str, noChoice);
+  free(str);
+
+  if (randomResult == 0)
+  {
+    return RANDOM;
+  }
+  else if (manualResult == 0)
+  {
+    return MANUAL;
+  }
+  else if (yesResult == 0)
+  {
+    return YES;
+  }
+  else if (noResult == 0)
+  {
+    return NO;
+  }
+  return 0;
+}
+
+char *pressButton(int *sizeStr)
+{
+  if (*sizeStr == 0)
+  {
+    *sizeStr = 1;
+  }
+
+  char *pressButton = (char *)malloc(*sizeStr * sizeof(char));
+  scanf("%s", pressButton);
+  printf("press -> %s\n", pressButton);
   return pressButton;
 }
 
 void randomFullStruct(int count)
 {
+  journalStudent = (itemStudent *)malloc(count * sizeof(itemStudent));
   char tempStr[250];
   int sizeStr;
   char *strLastName = "LastName";
@@ -122,8 +182,167 @@ void randomFullStruct(int count)
   }
 }
 
+void manualFullStruct(int count)
+{
+  int tempRezult;
+  char *tempStr = {"I"};
+  int sizeStr;
+  int sizeArr;
+  int isCheck = 1;
+  int decimalPressButton;
+
+  printf("Add Student? Y/N\n");
+  tempRezult = validationButton();
+
+  if (tempRezult == YES)
+  {
+    if (journalStudent == NULL)
+    {
+      journalStudent = (itemStudent *)malloc((count) * sizeof(itemStudent));
+    }
+    else
+    {
+      journalStudent = (itemStudent *)realloc(journalStudent, count * sizeof(itemStudent));
+    }
+
+    // char *str = pressButton((char *)malloc(*randomChoice * sizeof(char)));
+
+    printf("LastName student?\n");
+    char *strLastName = pressButton(malloc(1 * sizeof(char)));
+    sizeStr = (sizeof(strLastName) / sizeof(strLastName[0]));
+    journalStudent[count - 1].lastName = (char *)malloc(sizeStr * sizeof(char));
+    strcpy(journalStudent[count - 1].lastName, strLastName);
+    free(strLastName);
+
+    printf("Name student?\n");
+    char *strName = pressButton(malloc(*tempStr * sizeof(char)));
+    sizeStr = (sizeof(strName) / sizeof(strName[0]));
+    journalStudent[count - 1].name = (char *)malloc(sizeStr * sizeof(char));
+    strcpy(journalStudent[count - 1].name, strName);
+    free(strName);
+
+    printf("MiddleName student?\n");
+    char *strMiddleName = pressButton(malloc(*tempStr * sizeof(char)));
+    sizeStr = (sizeof(strMiddleName) / sizeof(strMiddleName[0]));
+    journalStudent[count - 1].middleName = (char *)malloc(sizeStr * sizeof(char));
+    strcpy(journalStudent[count - 1].middleName, strMiddleName);
+    free(strMiddleName);
+
+    while (isCheck)
+    {
+      printf("Gender student?\nMan->press 0, Woman->press 1\n");
+      scanf("%d", &decimalPressButton);
+      if (decimalPressButton == Man)
+      {
+        journalStudent[count - 1].gender = Man;
+        isCheck = 0;
+      }
+      else if (decimalPressButton == Woman)
+      {
+        journalStudent[count - 1].gender = Woman;
+        isCheck = 0;
+      }
+      else
+      {
+        isCheck = 1;
+        printf("error press button!\n");
+      }
+    }
+
+    isCheck = 1;
+    while (isCheck)
+    {
+      sizeArr = sizeof(Class) / sizeof(Class[0]);
+
+      printf("Class student?\n1...10 ->press 1...10\n");
+      scanf("%d", &decimalPressButton);
+
+      for (int i = 0; i < sizeArr; i++)
+      {
+        if (decimalPressButton == Class[i])
+        {
+          journalStudent[count - 1].class = Class[i];
+          isCheck = 0;
+        }
+      }
+
+      if (isCheck == 1)
+      {
+        printf("error press button!\n");
+      }
+    }
+
+    isCheck = 1;
+    while (isCheck)
+    {
+      printf("NameLesson?\nMathematics->press 0, Literature->press 1, Physics->press 2, Chemistry->press 3\n");
+      scanf("%d", &decimalPressButton);
+      switch (decimalPressButton)
+      {
+      case Mathematics:
+        journalStudent[count - 1].nameLesson = Mathematics;
+        isCheck = 0;
+        break;
+      case Literature:
+        journalStudent[count - 1].nameLesson = Literature;
+        isCheck = 0;
+        break;
+      case Physics:
+        journalStudent[count - 1].nameLesson = Physics;
+        isCheck = 0;
+        break;
+      case Chemistry:
+        journalStudent[count - 1].nameLesson = Chemistry;
+        isCheck = 0;
+        break;
+
+      default:
+        isCheck = 1;
+        printf("error press button!\n");
+        break;
+      }
+    }
+
+    isCheck = 1;
+    while (isCheck)
+    {
+      sizeArr = sizeof(GradeLesson) / sizeof(GradeLesson[0]);
+
+      printf("GradeLesson?\n1...5 ->press 0...5\n");
+      scanf("%d", &decimalPressButton);
+
+      for (int i = 0; i < sizeArr; i++)
+      {
+        if (decimalPressButton == Class[i])
+        {
+          journalStudent[count - 1].gradeLesson = GradeLesson[i];
+          isCheck = 0;
+        }
+      }
+
+      if (isCheck == 1)
+      {
+        printf("error press button!\n");
+      }
+    }
+
+    count++;
+    manualFullStruct(count);
+  }
+  else if (tempRezult == NO)
+  {
+    printConsoleJournal(journalStudent, count);
+  }
+  else
+  {
+    printf("error press button!\n");
+    manualFullStruct(count);
+  }
+}
+
 void printConsoleJournal(itemStudent journalStudent[], int count)
 {
+  printf("\n");
   char strGender[20];
   char strLesson[20];
 
@@ -166,7 +385,7 @@ void printConsoleJournal(itemStudent journalStudent[], int count)
            journalStudent[j].class, strLesson, journalStudent[j].gradeLesson);
   }
 }
-#pragma endListStudent
+
 #elif TASK == 2
 void listBook() {}
 #elif TASK == 3
