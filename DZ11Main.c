@@ -1,9 +1,10 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
-#define VOL 0 // 0, 1,2
+#define TASK 1 // 1, 2, 3
 
 void listStudent();
 void listBook();
@@ -12,11 +13,17 @@ void listWork();
 int main()
 {
   printf("Start DZ11\n");
+#if TASK == 1
   listStudent();
+#elif TASK == 2
+//
+#elif TASK == 3
+//
+#endif
 }
 
-#if VOL == 0
-#pragma region
+#if TASK == 1
+#pragma ListStudent
 enum Gender
 {
   Man,
@@ -46,38 +53,66 @@ typedef struct
   enum NameLesson nameLesson;
   int gradeLesson;
 } itemStudent;
-//
+
 int count = 10;
+itemStudent journalStudent[] = {};
+
 void randomFullStruct(int count);
 void printConsoleJournal(itemStudent *journalStudent, int count);
-
-itemStudent journalStudent[];
-//
+char *pressButton();
+int *getNumber();
 
 void listStudent()
 {
-  if (1)
+  char zz[] = "1";
+  // printf("%s",zz);
+  char *str=pressButton();
+  //*str = *pressButton();
+   printf("+++%s\n",&str);
+   int result =strcmp (str,"12");
+   //printf("+-%d\n",result);
+   free(str);
+  // str = pressButton(str);
+  // printf("==%s", str);
+printf("+-%d,%s\n",result,str);
+  if (result==NULL)
   {
+    printf("++%s\n", str);
     randomFullStruct(count);
   }
   printConsoleJournal(journalStudent, count);
 }
 
+char *pressButton()
+{
+  char *pressButton = (char *)malloc(20 * sizeof(char));
+  scanf("%s", &pressButton);
+  printf("+%s\n", &pressButton);
+  return pressButton;
+}
+
 void randomFullStruct(int count)
 {
-  char strLastName[20];
-  char strName[20];
-  char strMiddleName[20];
+  char tempStr[250];
+  int sizeStr;
+  char *strLastName = "LastName";
+  char *strName = "Name";
+  char *strMiddleName = "MiddleName";
 
   srand(time(0));
   for (int i = 0; i < count; i++)
   {
-    sprintf(strLastName, "%d", i);
-    journalStudent[i].lastName = strLastName;
-    sprintf(strName, "%d", i);
-    journalStudent[i].name = strName;
-    sprintf(strMiddleName, "%d", i);
-    journalStudent[i].middleName = strMiddleName;
+    sizeStr = sprintf(tempStr, "%s%d", strLastName, i);
+    journalStudent[i].lastName = (char *)malloc(sizeStr * sizeof(char));
+    strcpy(journalStudent[i].lastName, tempStr);
+
+    sizeStr = sprintf(tempStr, "%s%d", strName, i);
+    journalStudent[i].name = (char *)malloc(sizeStr * sizeof(char));
+    strcpy(journalStudent[i].name, tempStr);
+
+    sizeStr = sprintf(tempStr, "%s%d", strMiddleName, i);
+    journalStudent[i].middleName = (char *)malloc(sizeStr * sizeof(char));
+    strcpy(journalStudent[i].middleName, tempStr);
 
     journalStudent[i].gender = rand() % sizeGender;
     journalStudent[i].class = rand() % (sizeof(Class) / sizeof(Class[0])) + 1;
@@ -89,23 +124,19 @@ void randomFullStruct(int count)
 
 void printConsoleJournal(itemStudent journalStudent[], int count)
 {
-  printf("%s\n\n\n", journalStudent[1].lastName);
-
   char strGender[20];
   char strLesson[20];
 
   for (int j = 0; j < count; j++)
   {
-    printf("%s\n", journalStudent[j].lastName);
-
     switch (journalStudent[j].gender)
     {
     case Man:
       sprintf(strGender, "Man");
-      // break;
+      break;
     case Woman:
       sprintf(strGender, "Woman");
-      // break;
+      break;
     default:
       break;
     }
@@ -114,31 +145,30 @@ void printConsoleJournal(itemStudent journalStudent[], int count)
     {
     case Mathematics:
       sprintf(strLesson, "Mathematics");
-      // break;
+      break;
     case Literature:
       sprintf(strLesson, "Literature");
-      // break;
+      break;
     case Physics:
       sprintf(strLesson, "Physics");
-      // break;
+      break;
     case Chemistry:
       sprintf(strLesson, "Chemistry");
-      // break;
+      break;
     default:
       break;
     }
 
-   // printf("%s %s %s\n", journalStudent[j].lastName, journalStudent[j].name,
-    //       journalStudent[j].middleName);
-            
+    printf("%s %s %s\n", journalStudent[j].lastName, journalStudent[j].name,
+           journalStudent[j].middleName);
 
     printf("Gender->%s Class->%d Lesson->%s GradeLesson->%d\n\n", strGender,
            journalStudent[j].class, strLesson, journalStudent[j].gradeLesson);
   }
 }
-#pragma endregion
-#elif VOL == 1
+#pragma endListStudent
+#elif TASK == 2
 void listBook() {}
-#elif VOL == 2
+#elif TASK == 3
 void listWork() {}
 #endif
